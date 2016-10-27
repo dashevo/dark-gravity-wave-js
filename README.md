@@ -20,7 +20,7 @@ dgw.difficulty(lastInputs);
 
 ## API
 
-### difficulty(array)
+### darkGravityWaveTargetWithBlocks(array)
 
 #### array
 
@@ -28,7 +28,7 @@ Type: `array`
 
 Get the difficulty.  The array must contain the last 25 blocks.
 
-### difficulty(array,blockTime)
+### darkGravityWaveTargetWithBlocks(array,blockTime)
 
 #### array
 

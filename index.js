@@ -1,95 +1,78 @@
 'use strict';
 
-var blake = require('./lib/blake');
-var keccak = require('./lib/keccak').keccak_512;
-var skein = require('./lib/skein');
-var luffa = require('./lib/luffa');
-var simd = require('./lib/simd');
-var shavite = require('./lib/shavite');
-var cubehash = require('./lib/cubehash');
-var jh = require('./lib/jh');
-var echo = require('./lib/echo');
-var groestl = require('./lib/groestl');
-var bmw = require('./lib/bmw');
-var h = require('./lib/helper');
+var u256 = require("./lib/u256");
 
-var x11hash = module.exports;
+module.exports.darkGravityWaveTargetWithBlocks = function(blocks, blockTime) {
+    /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
+    blocks = blocks.slice();
+    var previousBlock = blocks.pop();
 
-module.exports.blake = function(str,format, output) {
-  return blake(str,format,output);
-}
+    if (!blockTime) blockTime = 2.5; //Dash default
 
-module.exports.bmw = function(str,format, output) {
-  return bmw(str,format,output);
-}
+    var nActualTimespan = 0;
+    var lastBlockTime = 0;
+    var blockCount = 0;
+    var sumTargets = new u256();
 
-module.exports.cubehash = function(str,format, output) {
-  return cubehash(str,format,output);
-}
+    if (previousBlock.height == 0 || previousBlock.height < 24) {
+        // This is the first block or the height is < PastBlocksMin
+        // Return minimal required work. (1e0ffff0)
+        return 0x1e0ffff0;
+    }
 
-module.exports.echo = function(str,format, output) {
-  return echo(str,format,output);
-}
+    var currentBlock = previousBlock;
+    // loop over the past n blocks, where n == PastBlocksMax
+    for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
 
-module.exports.groestl = function(str,format, output) {
-  return groestl(str,format,output);
-}
+        // Calculate average difficulty based on the blocks we iterate over in this for loop
+        if (blockCount <= 24) {
+            var currentTarget = new u256();
+            currentTarget.setCompact(currentBlock.target);
+            if (blockCount === 1) {
+                sumTargets = currentTarget.plus(currentTarget);
+            }
+            else {
+                sumTargets.add(currentTarget);
+            }
+        }
 
-module.exports.jh = function(str,format, output) {
-  return jh(str,format,output);
-}
+        // If this is the second iteration (LastBlockTime was set)
+        if (lastBlockTime > 0) {
+            // Calculate time difference between previous block and current block
+            var currentBlockTime = currentBlock.timestamp;
+            var diff = ((lastBlockTime) - (currentBlockTime));
+            // Increment the actual timespan
+            nActualTimespan += diff;
+        }
+        // Set lastBlockTime to the block time for the block in current iteration
+        lastBlockTime = currentBlock.timestamp;
 
-module.exports.keccak = function(str,format, output) {
-  var msg = str;
-  if (format === 2) {
-    msg = h.int32Buffer2Bytes(str);
-  }
-  if (output === 1) {
-    return keccak['array'](msg);
-  } else if (output === 2) {
-    return h.bytes2Int32Buffer(keccak['array'](msg));
-  } else {
-    return keccak['hex'](msg);
-  }
-}
+        currentBlock = blocks.pop();
+    }
+    // darkTarget is the difficulty
+    var darkTarget = sumTargets.divide(blockCount);
 
-module.exports.luffa = function(str,format, output) {
-  return luffa(str,format,output);
-}
+    // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
+    var nTargetTimespan = (blockCount - 1) * 60 * blockTime;
+    // Limit the re-adjustment to 3x or 0.33x
+    // We don't want to increase/decrease diff too much.
+    if (nActualTimespan < nTargetTimespan / 3.0)
+        nActualTimespan = nTargetTimespan / 3.0;
+    if (nActualTimespan > nTargetTimespan * 3.0)
+        nActualTimespan = nTargetTimespan * 3.0;
 
-module.exports.shavite = function(str,format, output) {
-  return shavite(str,format,output);
-}
+    // Calculate the new difficulty based on actual and target timespan.
+    var wew = darkTarget.multiplyWithInteger(Math.floor(nActualTimespan));
+    var aas = wew.divide(nTargetTimespan);
+    darkTarget = darkTarget.multiplyWithInteger(Math.floor(nActualTimespan)).divide(nTargetTimespan);
 
-module.exports.simd = function(str,format, output) {
-  return simd(str,format,output);
-}
+    var compact = darkTarget.getCompact();
 
-module.exports.skein = function(str,format, output) {
-  return skein(str,format,output);
-}
+    // If calculated difficulty is lower than the minimal diff, set the new difficulty to be the minimal diff.
+    if ((compact >>> 1) > 0x1e0ffff) {
+        compact = 0x1e0ffff0;
+    }
 
-
-module.exports.digest = function(str,format, output) {
-  var a = blake(str,format,2);
-  a = bmw(a,2,2);
-  a = groestl(a,2,2);
-  a = skein(a,2,2);
-  a = jh(a,2,2);
-  a = this.keccak(a,2,1);
-  a = luffa(a,1,2);
-  a = cubehash(a,2,2);
-  a = shavite(a,2,2);
-  a = simd(a,2,2);
-  a = echo(a,2,2);
-  a = a.slice(0,8);
-  if (output === 2) {
-    return a;
-  }
-  else if (output === 1) {
-    return h.int32Buffer2Bytes(a);
-  }
-  else {
-    return h.int32ArrayToHexString(a);
-  }
+    // Return the new diff.
+    return compact;
 }
