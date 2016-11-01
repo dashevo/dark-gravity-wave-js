@@ -4,7 +4,7 @@
   "description": "dark gravity wave blockchain difficulty calculator",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/test.js",
+    "test": "mocha test.js",
     "clean": "rm -rfv dist/*",
     "benchmark": "node test/benchmarks.js",
     "build": "grunt"

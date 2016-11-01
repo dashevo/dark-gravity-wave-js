@@ -69,7 +69,7 @@ module.exports.darkGravityWaveTargetWithBlocks = function(blocks, blockTime) {
     var compact = darkTarget.getCompact();
 
     // If calculated difficulty is lower than the minimal diff, set the new difficulty to be the minimal diff.
-    if ((compact >>> 1) > 0x1e0ffff) {
+    if ((compact >>> 1) > 0xF07FFF8) {
         compact = 0x1e0ffff0;
     }
 
