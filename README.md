@@ -14,7 +14,7 @@ $ npm install --save dark-gravity-wave-js
 var dgw = require('dark-gravity-wave');
 
 dgw.darkGravityWaveTargetWithBlocks(lastInputs);
-// -> '4da3b7c5ff698c6546564ebc72204f31885cd87b75b2b3ca5a93b5d75db85b8c'
+// -> '1be4c4d3'
 
 ```
 
