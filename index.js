@@ -1,14 +1,17 @@
 'use strict';
 
 var u256 = require("./lib/u256");
-
+/**
+* @param {Array} blocks - An array of blocks having height, target, imestamp property
+* @params {Int} [blockTime=150] - A block time value
+* @return {Int} compact - The difficulty value
+*/
 module.exports.darkGravityWaveTargetWithBlocks = function(blocks, blockTime) {
     /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
     blocks = blocks.slice();
     var previousBlock = blocks.pop();
 
-    if (!blockTime) blockTime = 2.5; //Dash default
-
+    if (!blockTime) blockTime = 150; //Dash default in second (2.5 min)
     var nActualTimespan = 0;
     var lastBlockTime = 0;
     var blockCount = 0;
@@ -53,7 +56,7 @@ module.exports.darkGravityWaveTargetWithBlocks = function(blocks, blockTime) {
     var darkTarget = sumTargets.divide(blockCount);
 
     // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
-    var nTargetTimespan = (blockCount - 1) * 60 * blockTime;
+    var nTargetTimespan = (blockCount - 1) * blockTime;
     // Limit the re-adjustment to 3x or 0.33x
     // We don't want to increase/decrease diff too much.
     if (nActualTimespan < nTargetTimespan / 3.0)

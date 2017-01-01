@@ -121,9 +121,17 @@ describe("u256 based arithmatic", function() {
 });
 
 describe("dark gravity wave", function() {
-  describe("test", function() {
-    it("blocks", function() {
-      expect(dgw.darkGravityWaveTargetWithBlocks(blocks)).to.equal(0x1B177E3A);
+  describe("difficulty calculation", function() {
+    it("should handle an array of blocks with a 150s block time", function() {
+      var diff = dgw.darkGravityWaveTargetWithBlocks(blocks);
+      var expectedHexDiff = 0x1B177E3A;//454524474 in decimal
+      expect(diff).to.equal(expectedHexDiff);
+    });
+    it("should handle an array of blocks with block time argument", function() {
+      var defaultBlockTimeSecond = 150;
+      var diff = dgw.darkGravityWaveTargetWithBlocks(blocks,defaultBlockTimeSecond);
+      var expectedHexDiff = 0x1B177E3A;
+      expect(diff).to.equal(expectedHexDiff);
     });
   });
 });
