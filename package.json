@@ -1,6 +1,6 @@
 {
   "name": "dark-gravity-wave-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "dark gravity wave blockchain difficulty calculator",
   "main": "index.js",
   "scripts": {

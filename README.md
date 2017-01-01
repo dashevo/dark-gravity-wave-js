@@ -5,7 +5,7 @@
 ## Installation
 
 ```
-$ npm install --save dark-gravity-wave-js
+$ npm install --S dark-gravity-wave-js
 ```
 
 ## Usage
