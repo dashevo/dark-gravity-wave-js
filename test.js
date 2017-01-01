@@ -133,5 +133,11 @@ describe("dark gravity wave", function() {
       var expectedHexDiff = 0x1B177E3A;
       expect(diff).to.equal(expectedHexDiff);
     });
+    it('should handle an array of block with another blocktime', function(){
+      var blockTimeSecond = 300;
+      var diff = dgw.darkGravityWaveTargetWithBlocks(blocks,blockTimeSecond);
+      var expectedHexDiff = 453754653;
+      expect(diff).to.equal(expectedHexDiff);
+    });
   });
 });
