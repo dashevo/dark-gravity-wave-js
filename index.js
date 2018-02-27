@@ -20,14 +20,12 @@ module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   // loop over the past n blocks, where n == PastBlocksMax
   for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
     // Calculate average difficulty based on the blocks we iterate over in this for loop
-    if (blockCount <= 24) {
-      const currentTarget = new u256();
-      currentTarget.setCompact(currentBlock.target);
-      if (blockCount === 1) {
-        sumTargets = currentTarget.plus(currentTarget);
-      } else {
-        sumTargets.add(currentTarget);
-      }
+    const currentTarget = new u256();
+    currentTarget.setCompact(currentBlock.target);
+    if (blockCount === 1) {
+      sumTargets = currentTarget.plus(currentTarget);
+    } else {
+      sumTargets.add(currentTarget);
     }
 
     // If this is the second iteration (LastBlockTime was set)
