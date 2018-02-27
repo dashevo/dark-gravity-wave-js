@@ -1,6 +1,14 @@
 const u256 = require('./lib/u256');
 
-const maxBlocks = 25;
+const maxBlocks = 24;
+
+function getDelta(acc, val) {
+  return { prev: val, sum: acc.sum + (val - acc.prev) };
+}
+
+function getCumulativeDelta(timeStamps) {
+  return timeStamps.reduce(getDelta, { prev: timeStamps[0], sum: 0 }).sum;
+}
 
 /**
 * @param {Array} blocks - An array of blocks having height, target, imestamp property
@@ -9,14 +17,14 @@ const maxBlocks = 25;
 * current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript
 */
 module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
-  const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 1)); // limit to 25
-  let currentBlock = blocks.pop();
+  const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)); // limit to 25
 
-  let nActualTimespan = 0;
-  let lastBlockTime = 0;
+
+  let nActualTimespan = getCumulativeDelta(blocks.map(b => b.timestamp));
   let blockCount = 0;
   let sumTargets = new u256();
 
+  let currentBlock = blocks.pop();
   // loop over the past n blocks, where n == PastBlocksMax
   for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
     // Calculate average difficulty based on the blocks we iterate over in this for loop
@@ -28,20 +36,11 @@ module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
       sumTargets.add(currentTarget);
     }
 
-    // If this is the second iteration (LastBlockTime was set)
-    if (lastBlockTime > 0) {
-      // Calculate time difference between previous block and current block
-      const currentBlockTime = currentBlock.timestamp;
-      const diff = ((lastBlockTime) - (currentBlockTime));
-      // Increment the actual timespan
-      nActualTimespan += diff;
-    }
     // Set lastBlockTime to the block time for the block in current iteration
-    lastBlockTime = currentBlock.timestamp;
-
     currentBlock = blocks.pop();
   }
-  // darkTarget is the difficulty
+  //   darkTarget is the difficulty
+
   let darkTarget = sumTargets.divide(blockCount);
 
   // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
