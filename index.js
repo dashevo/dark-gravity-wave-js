@@ -9,20 +9,19 @@ const u256 = require('./lib/u256');
 module.exports.getTarget = function getTarget(blocks, blockTime = 150) {
   /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
   blocks = blocks.slice();
-  const previousBlock = blocks.pop();
+  const currentBlock = blocks.pop();
 
   let nActualTimespan = 0;
   let lastBlockTime = 0;
   let blockCount = 0;
   let sumTargets = new u256();
 
-  if (previousBlock.height == 0 || previousBlock.height < 24) {
+  if (currentBlock.height == 0 || currentBlock.height < 24) {
     // This is the first block or the height is < PastBlocksMin
     // Return minimal required work. (1e0ffff0)
     return 0x1e0ffff0;
   }
 
-  let currentBlock = previousBlock;
   // loop over the past n blocks, where n == PastBlocksMax
   for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
     // Calculate average difficulty based on the blocks we iterate over in this for loop
