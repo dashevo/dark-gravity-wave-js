@@ -2,14 +2,6 @@ const u256 = require('./lib/u256');
 
 const maxBlocks = 24;
 
-function getDelta(acc, val) {
-  return { prev: val, sum: acc.sum + (val - acc.prev) };
-}
-
-function getCumulativeDelta(timeStamps) {
-  return timeStamps.reduce(getDelta, { prev: timeStamps[0], sum: 0 }).sum;
-}
-
 /**
 * @param {Array} blocks - An array of blocks having height, target, imestamp property
 * @params {Int} [blockTime=150] - A block time value
@@ -19,8 +11,7 @@ function getCumulativeDelta(timeStamps) {
 module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)); // limit to 25
 
-
-  let nActualTimespan = getCumulativeDelta(blocks.map(b => b.timestamp));
+  let nActualTimespan = blocks[blocks.length - 1].timestamp - blocks[0].timestamp;
   let blockCount = 0;
   let sumTargets = new u256();
 
