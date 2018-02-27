@@ -1,5 +1,3 @@
-
-
 const u256 = require('./lib/u256');
 /**
 * @param {Array} blocks - An array of blocks having height, target, imestamp property
@@ -9,18 +7,12 @@ const u256 = require('./lib/u256');
 module.exports.getTarget = function getTarget(blocks, blockTime = 150) {
   /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
   blocks = blocks.slice();
-  const currentBlock = blocks.pop();
+  let currentBlock = blocks.pop();
 
   let nActualTimespan = 0;
   let lastBlockTime = 0;
   let blockCount = 0;
   let sumTargets = new u256();
-
-  if (currentBlock.height == 0 || currentBlock.height < 24) {
-    // This is the first block or the height is < PastBlocksMin
-    // Return minimal required work. (1e0ffff0)
-    return 0x1e0ffff0;
-  }
 
   // loop over the past n blocks, where n == PastBlocksMax
   for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
