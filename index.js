@@ -1,12 +1,15 @@
 const u256 = require('./lib/u256');
+
+const maxBlocks = 25;
+
 /**
 * @param {Array} blocks - An array of blocks having height, target, imestamp property
 * @params {Int} [blockTime=150] - A block time value
 * @return {Int} compact - The difficulty value
+* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript
 */
-module.exports.getTarget = function getTarget(blocks, blockTime = 150) {
-  /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
-  blocks = blocks.slice();
+module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
+  const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 1)); // limit to 25
   let currentBlock = blocks.pop();
 
   let nActualTimespan = 0;
