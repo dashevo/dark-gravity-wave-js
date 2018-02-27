@@ -6,12 +6,11 @@ const u256 = require('./lib/u256');
 * @params {Int} [blockTime=150] - A block time value
 * @return {Int} compact - The difficulty value
 */
-module.exports.getTarget = function getTarget(blocks, blockTime) {
+module.exports.getTarget = function getTarget(blocks, blockTime = 150) {
   /* current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript */
   blocks = blocks.slice();
   const previousBlock = blocks.pop();
 
-  if (!blockTime) blockTime = 150; // Dash default in second (2.5 min)
   let nActualTimespan = 0;
   let lastBlockTime = 0;
   let blockCount = 0;
