@@ -10,7 +10,6 @@ const maxBlocks = 24;
 */
 module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse(); // limit to 24
-  let nActualTimespan = blocks[0].timestamp - blocks[blocks.length - 1].timestamp;
 
   // Todo: this is a strange impl but this is per original logic
   const tmp = new u256();
@@ -25,12 +24,9 @@ module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
 
   let darkTarget = blocks.slice(1, blocks.length + 2).reduce(reducer, tmpSumTarget).divide(blocks.length + 1);
 
-  // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
   const nTargetTimespan = (blocks.length) * blockTime;
-  // Limit the re-adjustment to 3x or 0.33x
-  // We don't want to increase/decrease diff too much.
-  if (nActualTimespan < nTargetTimespan / 3.0) { nActualTimespan = nTargetTimespan / 3.0; }
-  if (nActualTimespan > nTargetTimespan * 3.0) { nActualTimespan = nTargetTimespan * 3.0; }
+  let nActualTimespan = blocks[0].timestamp - blocks[blocks.length - 1].timestamp;
+  nActualTimespan = Math.min(Math.max(nActualTimespan, nTargetTimespan / 3.0), nTargetTimespan * 3.0);
 
   // Calculate the new difficulty based on actual and target timespan.
   darkTarget = darkTarget.multiplyWithInteger(nActualTimespan).divide(nTargetTimespan);
