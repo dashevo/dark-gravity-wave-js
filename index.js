@@ -31,13 +31,5 @@ module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   // Calculate the new difficulty based on actual and target timespan.
   darkTarget = darkTarget.multiplyWithInteger(nActualTimespan).divide(nTargetTimespan);
 
-  let compact = darkTarget.getCompact();
-
-  // If calculated difficulty is lower than the minimal diff, set the new difficulty to be the minimal diff.
-  if ((compact >>> 1) > 0xF07FFF8) {
-    compact = 0x1e0ffff0;
-  }
-
-  // Return the new diff.
-  return compact;
+  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // prevent lower than certain difficulty
 };
