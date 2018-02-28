@@ -1,3 +1,4 @@
+/* eslint new-cap: 0 */
 const u256 = require('./lib/u256');
 
 const maxBlocks = 24;
