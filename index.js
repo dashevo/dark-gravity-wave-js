@@ -9,38 +9,24 @@ const maxBlocks = 24;
 * current difficulty formula, dash - based on DarkGravity v3, original work done by evan duffield, modified for javascript
 */
 module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
-  const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)); // limit to 24
-
-  const revBlocks = JSON.parse(JSON.stringify(blocks)).reverse();
-
-  let nActualTimespan = blocks[blocks.length - 1].timestamp - blocks[0].timestamp;
-  let blockCount = 0;
+  const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse(); // limit to 24
+  let nActualTimespan = blocks[0].timestamp - blocks[blocks.length - 1].timestamp;
 
   // Todo: this is a strange impl but this is per original logic
   const tmp = new u256();
-  tmp.setCompact(revBlocks[0].target);
-  const sumTargets = tmp.plus(tmp);
+  tmp.setCompact(blocks[0].target);
+  const tmpSumTarget = tmp.plus(tmp);
 
-  let currentBlock = blocks.pop();
-  // loop over the past n blocks, where n == PastBlocksMax
-  for (blockCount = 1; currentBlock && currentBlock.height > 0 && blockCount <= 24; blockCount++) {
-    // Calculate average difficulty based on the blocks we iterate over in this for loop
-    const currentTarget = new u256();
-    currentTarget.setCompact(currentBlock.target);
-
-    if (blockCount > 1) {
-      sumTargets.add(currentTarget);
-    }
-
-    // Set lastBlockTime to the block time for the block in current iteration
-    currentBlock = blocks.pop();
+  function reducer(sum, b) {
+    const toAdd = new u256();
+    toAdd.setCompact(b.target);
+    return sum.add(toAdd);
   }
-  //   darkTarget is the difficulty
 
-  let darkTarget = sumTargets.divide(blockCount);
+  let darkTarget = blocks.slice(1, blocks.length + 2).reduce(reducer, tmpSumTarget).divide(blocks.length + 1);
 
   // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
-  const nTargetTimespan = (blockCount - 1) * blockTime;
+  const nTargetTimespan = (blocks.length) * blockTime;
   // Limit the re-adjustment to 3x or 0.33x
   // We don't want to increase/decrease diff too much.
   if (nActualTimespan < nTargetTimespan / 3.0) { nActualTimespan = nTargetTimespan / 3.0; }
