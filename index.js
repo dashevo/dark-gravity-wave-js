@@ -33,8 +33,6 @@ module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   if (nActualTimespan > nTargetTimespan * 3.0) { nActualTimespan = nTargetTimespan * 3.0; }
 
   // Calculate the new difficulty based on actual and target timespan.
-  const wew = darkTarget.multiplyWithInteger(Math.floor(nActualTimespan));
-  const aas = wew.divide(nTargetTimespan);
   darkTarget = darkTarget.multiplyWithInteger(Math.floor(nActualTimespan)).divide(nTargetTimespan);
 
   let compact = darkTarget.getCompact();
