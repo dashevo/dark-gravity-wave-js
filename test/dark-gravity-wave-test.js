@@ -1,7 +1,7 @@
 
 
 const dgw = require('../');
-const expect = require('chai').expect;
+const { expect } = require('chai').expect;
 
 const blocks = [{
   height: 312667,
@@ -108,21 +108,21 @@ const blocks = [{
 
 describe('dark gravity wave', () => {
   describe('difficulty calculation', () => {
-    it("should handle an array of blocks with a 150s block time", function() {
-      var diff = dgw.getTarget(blocks);
-      var expectedHexDiff = 0x1B177E3A;//454524474 in decimal
+    it('should handle an array of blocks with a 150s block time', () => {
+      const diff = dgw.getTarget(blocks);
+      const expectedHexDiff = 0x1B177E3A;// 454524474 in decimal
       expect(diff).to.equal(expectedHexDiff);
     });
-    it("should handle an array of blocks with block time argument", function() {
-      var defaultBlockTimeSecond = 150;
-      var diff = dgw.getTarget(blocks,defaultBlockTimeSecond);
-      var expectedHexDiff = 0x1B177E3A;
+    it('should handle an array of blocks with block time argument', () => {
+      const defaultBlockTimeSecond = 150;
+      const diff = dgw.getTarget(blocks, defaultBlockTimeSecond);
+      const expectedHexDiff = 0x1B177E3A;
       expect(diff).to.equal(expectedHexDiff);
     });
-    it('should handle an array of block with another blocktime', function(){
-      var blockTimeSecond = 300;
-      var diff = dgw.getTarget(blocks,blockTimeSecond);
-      var expectedHexDiff = 453754653;
+    it('should handle an array of block with another blocktime', () => {
+      const blockTimeSecond = 300;
+      const diff = dgw.getTarget(blocks, blockTimeSecond);
+      const expectedHexDiff = 453754653;
       expect(diff).to.equal(expectedHexDiff);
     });
   });
