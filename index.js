@@ -3,7 +3,7 @@ const u256 = require('./lib/u256');
 
 const maxBlocks = 24;
 
-// Todo: this is a strange impl but this is per original logic (needs review)
+// Todo: this fn could be further compacted by calling the constructor in a single line?
 function getDarkTarget(blocks) {
   function reducer(sum, b) {
     const toAdd = (new u256());
