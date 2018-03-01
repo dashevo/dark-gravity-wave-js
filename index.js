@@ -25,12 +25,11 @@ function getDarkTarget(blocks) {
 module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse(); // limit to 24
 
-  let darkTarget = getDarkTarget(blocks);
-
   const nTargetTimespan = (blocks.length) * blockTime;
   let nActualTimespan = blocks[0].timestamp - blocks[blocks.length - 1].timestamp;
   nActualTimespan = Math.min(Math.max(nActualTimespan, nTargetTimespan / 3.0), nTargetTimespan * 3.0);
 
+  let darkTarget = getDarkTarget(blocks);
   darkTarget = darkTarget.multiplyWithInteger(nActualTimespan).divide(nTargetTimespan);
 
   return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // prevent lower than certain difficulty
