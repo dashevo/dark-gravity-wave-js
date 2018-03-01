@@ -1,7 +1,7 @@
 
 /* eslint new-cap: 0 */
 const u256 = require('../lib/u256.js');
-const { expect } = require('chai').expect;
+const { expect } = require('chai');
 
 describe('u256 Object', () => {
   describe('creation', () => {

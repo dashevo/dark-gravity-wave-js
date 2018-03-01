@@ -1,7 +1,7 @@
 
 
 const dgw = require('../');
-const { expect } = require('chai').expect;
+const { expect } = require('chai');
 
 const blocks = [{
   height: 312667,
