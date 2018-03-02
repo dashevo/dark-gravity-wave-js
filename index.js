@@ -3,17 +3,17 @@ const u256 = require('./lib/u256');
 
 const maxBlocks = 24;
 
-// Todo: this fn could be further compacted by calling the constructor in a single line?
 function getDarkTarget(blocks) {
-  function reducer(sum, b) {
-    const toAdd = (new u256());
-    toAdd.setCompact(b.target);
-    return sum.add(toAdd);
-  }
-
   const start = new u256();
   start.setCompact(blocks[0].target);
-  return blocks.reduce(reducer, start).divide(blocks.length + 1);
+
+  return blocks
+    .reduce((sum, b) => {
+      const toAdd = new u256();
+      toAdd.setCompact(b.target);
+      return sum.add(toAdd);
+    }, start)
+    .divide(blocks.length + 1);
 }
 
 /**
@@ -23,15 +23,22 @@ function getDarkTarget(blocks) {
 * current difficulty formula, dash - based on DarkGravity v3
 * original work done by evan duffield, modified for javascript
 */
-module.exports.getTarget = function getTarget(allHeaders, blockTime = 150) {
+const getTarget = function getTarget(allHeaders, blockTime = 150) {
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
   const timeSpanTarget = (blocks.length) * blockTime;
-  let nActualTimespan = blocks[0].timestamp - blocks[blocks.length - 1].timestamp;
-  nActualTimespan = Math.min(Math.max(nActualTimespan, timeSpanTarget / 3.0), timeSpanTarget * 3.0);
+  const nActualTimespan = Math.min(
+    Math.max(blocks[0].timestamp - blocks[blocks.length - 1].timestamp, timeSpanTarget / 3.0),
+    timeSpanTarget * 3.0,
+  );
 
-  let darkTarget = getDarkTarget(blocks);
-  darkTarget = darkTarget.multiplyWithInteger(nActualTimespan).divide(timeSpanTarget);
+  const darkTarget = getDarkTarget(blocks)
+    .multiplyWithInteger(nActualTimespan)
+    .divide(timeSpanTarget);
 
-  return Math.min(darkTarget.getCompact(), 0x1e0ffff0);
+  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // put lower bound on target
+};
+
+module.exports = {
+  getTarget,
 };
