@@ -27,7 +27,7 @@ dgw.getTarget(lastHeaders);
 Type: `array`
 
 Get the difficulty.  The array must contain the last 24 blocks. Arrays with length > 24 are allowed however only latest 24 will be considered.
-Array objects must contain 
+Array objects must contain *timestamp* and *target* properties (where target = the difficulty at which the block has been solved)
 
 ### getTarget(array,blockTime)
 
