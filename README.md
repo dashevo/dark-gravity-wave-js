@@ -13,22 +13,23 @@ $ npm install --S dark-gravity-wave-js
 ```js
 var dgw = require('dark-gravity-wave');
 
-dgw.darkGravityWaveTargetWithBlocks(lastInputs);
+dgw.getTarget(lastHeaders);
 // -> '1be4c4d3'
 
 ```
 
 ## API
 
-### darkGravityWaveTargetWithBlocks(array)
+### getTarget(array)
 
 #### array
 
 Type: `array`
 
-Get the difficulty.  The array must contain the last 25 blocks.
+Get the difficulty.  The array must contain the last 24 blocks. Arrays with length > 24 are allowed however only latest 24 will be considered.
+Array objects must contain 
 
-### darkGravityWaveTargetWithBlocks(array,blockTime)
+### getTarget(array,blockTime)
 
 #### array
 
