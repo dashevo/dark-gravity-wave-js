@@ -34,9 +34,12 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
 
   const darkTarget = getDarkTarget(blocks)
     .multiplyWithInteger(nActualTimespan)
-    .divide(timeSpanTarget);
+    .divide(timeSpanTarget)
+    .getCompact();
 
-  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // put lower bound on target
+  // Put lower bound on target
+  // Todo - strange logic, adopted from core code, possible future refactor
+  return (darkTarget >>> 1) > 0xF07FFF8 ? 0x1e0ffff0 : darkTarget; // eslint-disable-line no-bitwise
 };
 
 module.exports = {
