@@ -37,8 +37,7 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
     .divide(timeSpanTarget)
     .getCompact();
 
-  // Put lower bound on target
-  // Todo - strange logic, adopted from core code, possible future refactor
+  // Prevent too high target (ie too low difficulty)
   return (darkTarget >>> 1) > 0xF07FFF8 ? 0x1e0ffff0 : darkTarget; // eslint-disable-line no-bitwise
 };
 
