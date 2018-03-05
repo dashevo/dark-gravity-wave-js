@@ -38,7 +38,10 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
     .getCompact();
 
   // Prevent too high target (ie too low difficulty)
-  return (darkTarget >>> 1) > 0xF07FFF8 ? 0x1e0ffff0 : darkTarget; // eslint-disable-line no-bitwise
+  const maxTarget =
+    (darkTarget >>> 1) > 0xF07FFF8 ? 0x1e0ffff0 : darkTarget; // eslint-disable-line no-bitwise
+
+  return maxTarget;
 };
 
 module.exports = {
