@@ -34,9 +34,14 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
 
   const darkTarget = getDarkTarget(blocks)
     .multiplyWithInteger(nActualTimespan)
-    .divide(timeSpanTarget);
+    .divide(timeSpanTarget)
+    .getCompact();
 
-  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // put lower bound on target
+  // Prevent too high target (ie too low difficulty)
+  const maxTarget =
+    (darkTarget >>> 1) > 0xF07FFF8 ? 0x1e0ffff0 : darkTarget; // eslint-disable-line no-bitwise
+
+  return maxTarget;
 };
 
 module.exports = {
