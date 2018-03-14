@@ -2,6 +2,7 @@
 const u256 = require('./lib/u256');
 
 const maxBlocks = 24;
+const maxTarget = 0x1e0fffff;
 
 function getDarkTarget(blocks) {
   const start = new u256();
@@ -24,6 +25,8 @@ function getDarkTarget(blocks) {
 * original work done by evan duffield, modified for javascript
 */
 const getTarget = function getTarget(allHeaders, blockTime = 150) {
+  if (allHeaders.length < maxBlocks) return maxTarget;
+
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
   const timeSpanTarget = (blocks.length) * blockTime;
@@ -34,9 +37,14 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
 
   const darkTarget = getDarkTarget(blocks)
     .multiplyWithInteger(nActualTimespan)
-    .divide(timeSpanTarget);
+    .divide(timeSpanTarget)
+    .getCompact();
 
-  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // put lower bound on target
+  // Prevent too high target (ie too low difficulty)
+  // eslint-disable-next-line no-bitwise
+  const target = (darkTarget >>> 1) > 0xF07FFF8 ? maxTarget : darkTarget;
+
+  return target;
 };
 
 module.exports = {
