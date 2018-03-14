@@ -1,5 +1,3 @@
-
-
 const dgw = require('../');
 const { expect } = require('chai');
 
@@ -104,7 +102,6 @@ const blocks = [{
   target: 0x1b1777d4,
   timestamp: 1438531991,
 }];
-
 
 describe('dark gravity wave', () => {
   describe('difficulty calculation', () => {

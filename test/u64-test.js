@@ -1,4 +1,3 @@
-
 /* eslint new-cap: 0 */
 const u64 = require('../lib/u64.js');
 const { expect } = require('chai');
