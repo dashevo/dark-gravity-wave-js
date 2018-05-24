@@ -20,7 +20,7 @@ function getDarkTarget(blocks) {
 * original work done by evan duffield, modified for javascript
 */
 function getTarget(allHeaders, blockTime) {
-  if (allHeaders.length < maxBlocks) return maxTarget;
+  if (allHeaders.length < maxBlocks) return getDoubleFrom256(maxTarget);
 
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
@@ -30,7 +30,7 @@ function getTarget(allHeaders, blockTime) {
     timeSpanTarget * 3.0,
   );
 
-  const darkTarget = ((getDarkTarget(blocks) * nActualTimespan) / timeSpanTarget).getCompact();
+  const darkTarget = ((getDarkTarget(blocks) * nActualTimespan) / timeSpanTarget);
 
   // Prevent too high target (ie too low difficulty)
   const maxTargetAsDouble = getDoubleFrom256(maxTarget);
