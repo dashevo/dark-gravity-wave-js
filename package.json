@@ -37,5 +37,8 @@
     "grunt-contrib-watch": "^1.0.0",
     "mocha": "^2.5.3",
     "uglify": "^0.1.5"
+  },
+  "dependencies": {
+    "bn.js": "^4.11.8"
   }
 }
