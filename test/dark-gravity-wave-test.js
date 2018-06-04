@@ -1,5 +1,3 @@
-
-
 const dgw = require('../');
 const { expect } = require('chai');
 
@@ -105,25 +103,24 @@ const blocks = [{
   timestamp: 1438531991,
 }];
 
-
 describe('dark gravity wave', () => {
   describe('difficulty calculation', () => {
-    it('should handle an array of blocks with a 150s block time', () => {
-      const diff = dgw.getTarget(blocks);
-      const expectedHexDiff = 0x1B177E3A;// 454524474 in decimal
-      expect(diff).to.equal(expectedHexDiff);
+    it('should be valid for low enough target', () => {
+      const highTargetBits = 0x1b0777d4;
+      const result = dgw.isValidTarget(highTargetBits, blocks);
+      expect(result).to.equal(true);
     });
-    it('should handle an array of blocks with block time argument', () => {
-      const defaultBlockTimeSecond = 150;
-      const diff = dgw.getTarget(blocks, defaultBlockTimeSecond);
-      const expectedHexDiff = 0x1B177E3A;
-      expect(diff).to.equal(expectedHexDiff);
+
+    it('should be invalid for too high target', () => {
+      const highTargetBits = 0x208fffff;
+      const result = dgw.isValidTarget(highTargetBits, blocks);
+      expect(result).to.equal(false);
     });
-    it('should handle an array of block with another blocktime', () => {
-      const blockTimeSecond = 300;
-      const diff = dgw.getTarget(blocks, blockTimeSecond);
-      const expectedHexDiff = 453754653;
-      expect(diff).to.equal(expectedHexDiff);
+
+    it('should be valid for the max regtest target if less than 25 blocks has been mined', () => {
+      const highTargetBits = 0x207fffff;
+      const result = dgw.isValidTarget(highTargetBits, blocks.slice(0, 10));
+      expect(result).to.equal(true);
     });
   });
 });

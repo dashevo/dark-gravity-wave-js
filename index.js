@@ -1,29 +1,27 @@
 /* eslint new-cap: 0 */
-const u256 = require('./lib/u256');
+// const u256 = require('./lib/u256');
+const getDoubleFrom256 = require('./lib//utils/getDoubleFrom256');
 
 const maxBlocks = 24;
 
-function getDarkTarget(blocks) {
-  const start = new u256();
-  start.setCompact(blocks[0].target);
+// Using regtest targets according to Bitcoin specifications
+// Todo: adapt to allow for test/mainnet targets (0x1d00ffff)
+const maxTarget = 0x207fffff;
 
-  return blocks
-    .reduce((sum, b) => {
-      const toAdd = new u256();
-      toAdd.setCompact(b.target);
-      return sum.add(toAdd);
-    }, start)
-    .divide(blocks.length + 1);
+function getDarkTarget(blocks) {
+  return blocks.reduce((sum, b) => sum + getDoubleFrom256(b.target), 0.0) / (blocks.length + 1);
 }
 
 /**
-* @param {Array} blocks - An array of blocks having height, target, imestamp property
+* @param {Array} blocks - An array of blocks having height, target, timestamp property
 * @params {Int} [blockTime=150] - A block time value
 * @return {Int} compact - The difficulty value
 * current difficulty formula, dash - based on DarkGravity v3
 * original work done by evan duffield, modified for javascript
 */
-const getTarget = function getTarget(allHeaders, blockTime = 150) {
+function getTarget(allHeaders, blockTime) {
+  if (allHeaders.length < maxBlocks) return getDoubleFrom256(maxTarget);
+
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
   const timeSpanTarget = (blocks.length) * blockTime;
@@ -32,13 +30,17 @@ const getTarget = function getTarget(allHeaders, blockTime = 150) {
     timeSpanTarget * 3.0,
   );
 
-  const darkTarget = getDarkTarget(blocks)
-    .multiplyWithInteger(nActualTimespan)
-    .divide(timeSpanTarget);
+  const darkTarget = ((getDarkTarget(blocks) * nActualTimespan) / timeSpanTarget);
 
-  return Math.min(darkTarget.getCompact(), 0x1e0ffff0); // put lower bound on target
-};
+  // Prevent too high target (ie too low difficulty)
+  const maxTargetAsDouble = getDoubleFrom256(maxTarget);
+  return Math.min(darkTarget, maxTargetAsDouble);
+}
+
+function isValidTarget(headerBits, allHeaders, blockTime = 150) {
+  return getDoubleFrom256(headerBits) <= getTarget(allHeaders, blockTime);
+}
 
 module.exports = {
-  getTarget,
+  isValidTarget,
 };
