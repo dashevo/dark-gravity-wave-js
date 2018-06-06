@@ -1,6 +1,6 @@
 /* eslint new-cap: 0 */
 // const u256 = require('./lib/u256');
-const getDoubleFrom256 = require('./lib//utils/getDoubleFrom256');
+const getDoubleFrom256 = require('./lib/utils/getDoubleFrom256');
 
 const maxBlocks = 24;
 
