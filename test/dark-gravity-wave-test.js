@@ -95,24 +95,24 @@ const blocks = [{
     timestamp: 1438531838,
 }, {
     height: 312690,
-    target: 0x1b16dca7,//454483111
+    target: 0x1b16dca7,
     timestamp: 1438531999,
 }, {
     height: 312691,
-    target: 0x1b1777d4,//454522836
+    target: 0x1b1777d4,
     timestamp: 1438531991,
 }];
 
 describe('dark gravity wave', () => {
     describe('difficulty calculation', () => {
         it('should be valid for low enough target', () => {
-            const highTargetBits = 0x1b0777d4; // 453474260
+            const highTargetBits = 0x1b0777d4;
             const result = dgw.isValidTarget(highTargetBits, blocks);
             expect(result).to.equal(true);
         });
 
         it('should be invalid for too high target', () => {
-            const highTargetBits = 0x208fffff; // 546308095
+            const highTargetBits = 0x208fffff;
             const result = dgw.isValidTarget(highTargetBits, blocks);
             expect(result).to.equal(false);
         });
@@ -123,7 +123,7 @@ describe('dark gravity wave', () => {
             expect(result).to.equal(true);
         });
 
-                it('should be valid for int headerBits', () => {
+        it('should be valid for int headerBits', () => {
             const highTargetInt = 1000;
             const result = dgw.isValidTarget(highTargetInt, blocks);
             expect(result).to.equal(true);
@@ -135,10 +135,10 @@ describe('dark gravity wave', () => {
             expect(result).to.equal(false);
         });
 
-        it('should be valid when num blocks < maxBlocks and maxTarget = 0x207fffff', () => {//TODO is it True?
+        it('should be valid when num blocks < maxBlocks and maxTarget = 0x207fffff', () => {
             const highTargetInt = 0x207fffff;
             const result = dgw.isValidTarget(highTargetInt, blocks.slice(0, 10));
-            expect(result).to.equal(true);// TODO change on false?
+            expect(result).to.equal(true);
         });
 
         it('should be invalid maxTarget = 0x207fffff as int', () => {
@@ -172,12 +172,15 @@ describe('dark gravity wave', () => {
             }).to.throw('allHeaders.slice is not a function');
         });
 
+        /* https://dashpay.atlassian.net/browse/EV-897
         it('should throw error for allHeaders is string', () => {
             // TODO not very good that we allow string although it's length < 25 and ignored in getTarget
             const highTargetBits = 0x1b0777d4;
-            const result = dgw.isValidTarget(highTargetBits, 'my_string');
-            expect(result).to.equal(true);
+            expect(() => {
+                dgw.isValidTarget(highTargetBits, 'my_string');
+            }).to.throw('allHeaders.slice is not a function. TODO change message');
         });
+        */
 
         it('should throw error for allHeaders is string > 25 chars', () => {
             const highTargetBits = 0x1b0777d4;
@@ -205,21 +208,31 @@ describe('dark gravity wave', () => {
         });
 
         it('height values ignored in calculation in getTarget function', () => {
-            //TODO is it true?
-            //and we can pass any blocks height: invalid, duplicates, not ordered...?
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks));
-            blocks2.forEach(function(value){
+            blocks2.forEach(function (value) {
                 delete value["height"];
             });
             const result = dgw.isValidTarget(highTargetBits, blocks2);
             expect(result).to.equal(true);
         });
 
+        it('height values ignored in calculation in getTarget function: the same values', () => {
+            const highTargetBits = 0x1b0777d4;
+            const blocks2 = JSON.parse(JSON.stringify(blocks));
+            var temp = blocks2[0]["height"]
+            blocks2.forEach(function (value) {
+                value["height"] = temp;
+            });
+            const result = dgw.isValidTarget(highTargetBits, blocks2);
+            expect(result).to.equal(true);
+        });
+
+
         it('should throw error when compact is not defined in blocks', () => {
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks));
-            blocks2.forEach(function(value){
+            blocks2.forEach(function (value) {
                 delete value["target"];
             });
             expect(() => {
@@ -230,55 +243,87 @@ describe('dark gravity wave', () => {
         it('should be invalid when timestamp values not specified', () => {
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks));
-            blocks2.forEach(function(value){
+            blocks2.forEach(function (value) {
                 delete value["timestamp"];
             });
             const result = dgw.isValidTarget(highTargetBits, blocks2);
             expect(result).to.equal(false);
-       });
+        });
 
         it('should be invalid for blockTime=0', () => {
-            const highTargetBits = 0x1b0777d4; // 453474260
-            const result = dgw.isValidTarget(highTargetBits, blocks,  blockTime = 0);
+            const highTargetBits = 0x1b0777d4;
+            const result = dgw.isValidTarget(highTargetBits, blocks, blockTime = 0);
             expect(result).to.equal(false);
         });
 
-        it('should be invalid for blockTime negative', () => {//TODO We should not allow negative blockTime
-            const highTargetBits = 0x1b0777d4; // 453474260
-            const result = dgw.isValidTarget(highTargetBits, blocks,  blockTime = -1);
-            expect(result).to.equal(true);//TODO change on true!
+        /*
+        it('should be invalid for blockTime negative', () => {//TODO We should not allow negative blockTime - agree
+            const highTargetBits = 0x1b0777d4;
+            dgw.isValidTarget(highTargetBits, blocks, blockTime = -1);
+            }).to.throw('TODO add error message');
         });
+        */
 
-        it('should be invalid when timestamp for some blocks grater then next one', () => {//TODO We should check if timestamp is grater then previous
+        it('should be valid when timestamp for some blocks grater then next one. no verification', () => {
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks));
-            blocks2.forEach(function(value){
-                if (Math.random() >= 0.3){
-                    value["timestamp"]+=2000
+            blocks2.forEach(function (value) {
+                if (Math.random() >= 0.2) {
+                    value["timestamp"] += 2000
                 }
             });
             const result = dgw.isValidTarget(highTargetBits, blocks2);
-            expect(result).to.equal(true);//TODO change on false!
+            expect(result).to.equal(true);
         });
 
-        it('should be invalid when timestamp for some blocks grater then next one', () => {//TODO We should check if timestamp is grater then previous?
+        it('should be valid when timestamp is 0', () => {
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks));
-            blocks2.forEach(function(value){
-                if (Math.random() >= 0.3){
-                    value["timestamp"]+=2000
-                }
+            blocks2.forEach(function (value) {
+                value["timestamp"] = 0
             });
             const result = dgw.isValidTarget(highTargetBits, blocks2);
-            expect(result).to.equal(true);//TODO change on false!
+            expect(result).to.equal(true);
         });
 
-
-        it('should be invalid when reverse block array', () => {//TODO Should we check order of blocks?
+        it('should be valid when reverse block array(reversed timestamp)', () => {
             const highTargetBits = 0x1b0777d4;
             const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
             const result = dgw.isValidTarget(highTargetBits, blocks2);
-            expect(result).to.equal(true);//TODO change on false?
+            expect(result).to.equal(true);
+        });
+
+        it('should be valid when timestamp for last block is too big', () => {
+            const highTargetBits = 0x1b0777d4;
+            const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+            blocks2[blocks2.length - 1]["timestamp"] += 2000000000;
+            const result = dgw.isValidTarget(highTargetBits, blocks2);
+            expect(result).to.equal(true);
+        });
+
+        it('should be valid when first and last block with small timestamp diff', () => {
+            const highTargetBits = 0x1b0777d4;
+            const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+            // 1 seconds between blocks
+            blocks2[blocks2.length - 24]["timestamp"] = blocks2[blocks2.length - 1]["timestamp"] - 24;
+            const result = dgw.isValidTarget(highTargetBits, blocks2);
+            expect(result).to.equal(true);
+        });
+
+        it('should be valid when first and last block with diff in (blocks.length) * blockTime/3.0', () => {
+            const highTargetBits = 0x1b0777d4;
+            const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+            blocks2[blocks2.length - 24]["timestamp"] = blocks2[blocks2.length - 1]["timestamp"] - 24 * 150 / 3.0;
+            const result = dgw.isValidTarget(highTargetBits, blocks2);
+            expect(result).to.equal(true);
+        });
+
+        it('should be valid when first and last block with diff in (blocks.length) * blockTime*3.0', () => {
+            const highTargetBits = 0x1b0777d4;
+            const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+            blocks2[blocks2.length - 24]["timestamp"] = blocks2[blocks2.length - 1]["timestamp"] - 24 * 150 * 3.0;
+            const result = dgw.isValidTarget(highTargetBits, blocks2);
+            expect(result).to.equal(true);
         });
 
 
