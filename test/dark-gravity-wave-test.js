@@ -3,11 +3,11 @@ const { expect } = require('chai');
 
 const blocks = [{
   height: 312667,
-  target: 0x1b193a68, //
+  target: 0x1b193a68,
   timestamp: 1438528803,
 }, {
   height: 312668,
-  target: 0x1b1940c9, // 454639817
+  target: 0x1b1940c9,
   timestamp: 1438528786,
 }, {
   height: 312669,
@@ -253,7 +253,7 @@ describe('dark gravity wave', () => {
 
     /*
         it('should be invalid for blockTime negative', () => {
-        //TODO We should not allow negative blockTime - agree
+        // TODO We should not allow negative blockTime - agree
             const highTargetBits = 0x1b0777d4;
             dgw.isValidTarget(highTargetBits, blocks, blockTime = -1);
             }).to.throw('TODO add error message');
