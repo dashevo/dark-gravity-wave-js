@@ -9,7 +9,9 @@
     "test": "mocha test/*-test.js",
     "clean": "rm -rfv dist/*",
     "benchmark": "node test/benchmarks.js",
-    "build": "grunt"
+    "browserify": "browserify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.js",
+    "tinyify": "browserify -p tinyify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.min.js",
+    "build": "npm run browserify && npm run tinyify"
   },
   "repository": {
     "type": "git",
