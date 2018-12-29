@@ -1,5 +1,5 @@
 {
-  "name": "dark-gravity-wave",
+  "name": "@dashevo/dark-gravity-wave",
   "version": "1.0.1",
   "description": "Dark Gravity Wave difficulty retarget algorithm in JavaScript",
   "main": "index.js",
