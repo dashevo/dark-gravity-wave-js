@@ -1,7 +1,7 @@
 {
-  "name": "dark-gravity-wave-js",
+  "name": "@dashevo/dark-gravity-wave",
   "version": "1.0.1",
-  "description": "dark gravity wave blockchain difficulty calculator",
+  "description": "Dark Gravity Wave difficulty retarget algorithm in JavaScript",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
@@ -9,11 +9,13 @@
     "test": "mocha test/*-test.js",
     "clean": "rm -rfv dist/*",
     "benchmark": "node test/benchmarks.js",
-    "build": "grunt"
+    "browserify": "browserify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.js",
+    "tinyify": "browserify -p tinyify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.min.js",
+    "build": "npm run browserify && npm run tinyify"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/quantumexplorer/x11-hash-js.git"
+    "url": "git+https://github.com/dashevo/dark-gravity-wave-js.git"
   },
   "keywords": [
     "dash",
@@ -22,21 +24,17 @@
   "author": "quantumexplorer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/quantumexplorer/dark-gravity-wave/issues"
+    "url": "https://github.com/dashevo/dark-gravity-wave-js/issues"
   },
   "devDependencies": {
-    "benchmark": "^2.1.0",
-    "browserify": "^13.0.1",
-    "chai": "^3.5.0",
-    "eslint": "^4.18.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.9.0",
-    "grunt": "^1.0.1",
-    "grunt-browserify": "^5.0.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "mocha": "^2.5.3",
-    "uglify": "^0.1.5"
+    "benchmark": "^2.1.4",
+    "browserify": "^16.2.3",
+    "chai": "^4.2.0",
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0",
+    "tinyify": "^2.5.0"
   },
   "dependencies": {
     "bn.js": "^4.11.8"

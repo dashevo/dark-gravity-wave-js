@@ -1,1 +1,7 @@
-script: echo "npm test temporarily disabled"
+language: node_js
+node_js:
+  - '8'
+install:
+  - npm install
+before_script:
+  - npm run lint

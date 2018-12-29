@@ -1,21 +1,22 @@
-# dark-gravity-wave
+# dark-gravity-wave-js
 
-> Computes the difficulty of the dark-gravity-wave.
+[![Build Status](https://travis-ci.com/dashevo/dark-gravity-wave-js.svg?branch=master)](https://travis-ci.com/dashevo/dark-gravity-wave-js)
 
-## Installation
+> Dark Gravity Wave difficulty retarget algorithm in JavaScript
 
-```
-$ npm install --S dark-gravity-wave-js
+## Install
+
+```sh
+npm install @dashevo/dark-gravity-wave
 ```
 
 ## Usage
 
 ```js
-var dgw = require('dark-gravity-wave');
+var dgw = require('@dashevo/dark-gravity-wave');
 
 dgw.getTarget(lastHeaders);
 // -> '1be4c4d3'
-
 ```
 
 ## API
@@ -36,3 +37,11 @@ Array objects must contain *timestamp* and *target* properties (where target = t
 Type: `array`, `int` (default 150)
 
 Get the difficulty for dark-gravity-wave's other than dash's 150 second block time.
+
+## Contributing
+
+Feel free to dive in! [Open an issue](https://github.com/dashevo/dark-gravity-wave-js/issues/new) or submit PRs.
+
+## License
+
+[MIT](LICENSE) &copy; Dash Core Group, Inc.

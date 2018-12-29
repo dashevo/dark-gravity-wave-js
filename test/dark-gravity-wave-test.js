@@ -1,5 +1,5 @@
-const dgw = require('../');
 const { expect } = require('chai');
+const dgw = require('../');
 
 const blocks = [{
   height: 312667,
@@ -120,6 +120,211 @@ describe('dark gravity wave', () => {
     it('should be valid for the max regtest target if less than 25 blocks has been mined', () => {
       const highTargetBits = 0x207fffff;
       const result = dgw.isValidTarget(highTargetBits, blocks.slice(0, 10));
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid for int headerBits', () => {
+      const highTargetInt = 1000;
+      const result = dgw.isValidTarget(highTargetInt, blocks);
+      expect(result).to.equal(true);
+    });
+
+    it('should be invalid maxTarget = 0x207fffff', () => {
+      const highTargetInt = 0x207fffff;
+      const result = dgw.isValidTarget(highTargetInt, blocks);
+      expect(result).to.equal(false);
+    });
+
+    it('should be valid when num blocks < maxBlocks and maxTarget = 0x207fffff', () => {
+      const highTargetInt = 0x207fffff;
+      const result = dgw.isValidTarget(highTargetInt, blocks.slice(0, 10));
+      expect(result).to.equal(true);
+    });
+
+    it('should be invalid maxTarget = 0x207fffff as int', () => {
+      const highTargetInt = 545259519;
+      const result = dgw.isValidTarget(highTargetInt, blocks);
+      expect(result).to.equal(false);
+    });
+
+    it('should be valid for maxTarget > 0x207fffff', () => {
+      const highTargetInt = 0x20800000;
+      const result = dgw.isValidTarget(highTargetInt, blocks);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid for maxTarget > 0x207fffff as int', () => {
+      const highTargetInt = 0x20800000;
+      const result = dgw.isValidTarget(highTargetInt, blocks);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when allHeaders is empty array', () => {
+      const highTargetInt = 0x20800000;
+      const result = dgw.isValidTarget(highTargetInt, [{}]);
+      expect(result).to.equal(true);
+    });
+
+    it('should throw error for allHeaders is {}', () => {
+      const highTargetBits = 0x208fffff;
+      expect(() => {
+        dgw.isValidTarget(highTargetBits, {});
+      }).to.throw('allHeaders.slice is not a function');
+    });
+
+    it('should throw error for allHeaders is string > 25 chars', () => {
+      const highTargetBits = 0x1b0777d4;
+      expect(() => {
+        dgw.isValidTarget(highTargetBits, 's'.repeat(26));
+      }).to.throw('allHeaders.slice(...).reverse is not a function');
+    });
+
+    it('should throw error for signed int', () => {
+      expect(() => {
+        dgw.isValidTarget(-1, blocks);
+      }).to.throw('byte array longer than desired length');
+    });
+
+    it('should throw error when compact is undefined', () => {
+      expect(() => {
+        dgw.isValidTarget(undefined, blocks);
+      }).to.throw('Compact of type undefined not supported');
+    });
+
+    it('should throw error when compact is boolean', () => {
+      expect(() => {
+        dgw.isValidTarget(true, blocks);
+      }).to.throw('Compact of type boolean not supported');
+    });
+
+    it('height values ignored in calculation in getTarget function', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      blocks2.forEach((value) => {
+        const v = value;
+        delete v.height;
+      });
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('height values ignored in calculation in getTarget function: the same values', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      const temp = blocks2[0].height;
+      blocks2.forEach((value) => {
+        const v = value;
+        v.height = temp;
+      });
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+
+    it('should throw error when compact is not defined in blocks', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      blocks2.forEach((value) => {
+        const v = value;
+        delete v.target;
+      });
+      expect(() => {
+        dgw.isValidTarget(highTargetBits, blocks2);
+      }).to.throw('Compact of type undefined not supported');
+    });
+
+    it('should be invalid when timestamp values not specified', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      blocks2.forEach((value) => {
+        const v = value;
+        delete v.timestamp;
+      });
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(false);
+    });
+
+    it('should be invalid for blockTime=0', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blockTime = 0;
+      const result = dgw.isValidTarget(highTargetBits, blocks, blockTime);
+      expect(result).to.equal(false);
+    });
+
+    /*
+        it('should be invalid for blockTime negative', () => {
+        // TODO We should not allow negative blockTime - agree
+            const highTargetBits = 0x1b0777d4;
+            dgw.isValidTarget(highTargetBits, blocks, blockTime = -1);
+            }).to.throw('TODO add error message');
+        });
+        */
+
+    it('should be valid when timestamp for some blocks grater then next one. no verification', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      blocks2.forEach((value) => {
+        if (Math.random() >= 0.2) {
+          const v = value;
+          v.timestamp += 2000;
+        }
+      });
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when timestamp is 0', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      blocks2.forEach((value) => {
+        const v = value;
+        v.timestamp = 0;
+      });
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when reverse block array(reversed timestamp)', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when timestamp for last block is too big', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      blocks2[blocks2.length - 1].timestamp += 2000000000;
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when first and last block with small timestamp diff', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      // 1 seconds between blocks
+      blocks2[blocks2.length - 24].timestamp = blocks2[blocks2.length - 1].timestamp - 24;
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when first and last block with diff in (blocks.length) * blockTime/3.0', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      // eslint-disable-next-line operator-linebreak
+      blocks2[blocks2.length - 24].timestamp =
+          blocks2[blocks2.length - 1].timestamp - ((24 * 150) / 3.0);
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      expect(result).to.equal(true);
+    });
+
+    it('should be valid when first and last block with diff in (blocks.length) * blockTime*3.0', () => {
+      const highTargetBits = 0x1b0777d4;
+      const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      // eslint-disable-next-line operator-linebreak
+      blocks2[blocks2.length - 24].timestamp =
+          blocks2[blocks2.length - 1].timestamp - (24 * 150 * 3.0);
+      const result = dgw.isValidTarget(highTargetBits, blocks2);
       expect(result).to.equal(true);
     });
   });
