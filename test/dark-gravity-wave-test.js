@@ -1,5 +1,5 @@
-const dgw = require('../');
 const { expect } = require('chai');
+const dgw = require('../');
 
 const blocks = [{
   height: 312667,
@@ -311,6 +311,7 @@ describe('dark gravity wave', () => {
     it('should be valid when first and last block with diff in (blocks.length) * blockTime/3.0', () => {
       const highTargetBits = 0x1b0777d4;
       const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      // eslint-disable-next-line operator-linebreak
       blocks2[blocks2.length - 24].timestamp =
           blocks2[blocks2.length - 1].timestamp - ((24 * 150) / 3.0);
       const result = dgw.isValidTarget(highTargetBits, blocks2);
@@ -320,6 +321,7 @@ describe('dark gravity wave', () => {
     it('should be valid when first and last block with diff in (blocks.length) * blockTime*3.0', () => {
       const highTargetBits = 0x1b0777d4;
       const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
+      // eslint-disable-next-line operator-linebreak
       blocks2[blocks2.length - 24].timestamp =
           blocks2[blocks2.length - 1].timestamp - (24 * 150 * 3.0);
       const result = dgw.isValidTarget(highTargetBits, blocks2);
