@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "pkgverchk": "test $(jq -r .version package.json) = $(jq -r .version package-lock.json)",
-    "test": "mocha test/*-test.js",
+    "test": "mocha",
     "clean": "rm -rfv dist/*",
     "browserify": "browserify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.js",
     "tinyify": "browserify -p tinyify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.min.js",
