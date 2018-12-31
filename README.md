@@ -1,6 +1,7 @@
 # dark-gravity-wave-js
 
 [![Build Status](https://travis-ci.com/dashevo/dark-gravity-wave-js.svg?branch=master)](https://travis-ci.com/dashevo/dark-gravity-wave-js)
+[![NPM version](https://img.shields.io/npm/v/@dashevo/dark-gravity-wave.svg)](https://npmjs.org/package/@dashevo/dark-gravity-wave)
 
 > Dark Gravity Wave difficulty retarget algorithm in JavaScript
 

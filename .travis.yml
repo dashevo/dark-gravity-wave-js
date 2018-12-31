@@ -1,7 +1,28 @@
+sudo: false
+dist: trusty
 language: node_js
+
+# Support Active LTS versions of Node.js
 node_js:
   - '8'
+  - '10'
+
 install:
   - npm install
-before_script:
+
+script:
+  - npm run pkgverchk
   - npm run lint
+  - npm run test
+  - npm run build
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    # Ensure tag number matches the one in package.json
+    - test v"$(jq -r .version package.json)" = "$TRAVIS_TAG"
+    - npm publish
+  on:
+    tags: true
+    repo: dashevo/dark-gravity-wave-js

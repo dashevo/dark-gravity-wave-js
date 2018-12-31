@@ -6,9 +6,9 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "mocha test/*-test.js",
-    "clean": "rm -rfv dist/*",
-    "benchmark": "node test/benchmarks.js",
+    "pkgverchk": "test $(jq -r .version package.json) = $(jq -r .version package-lock.json)",
+    "test": "mocha",
+    "clean": "rm -rfv dist",
     "browserify": "browserify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.js",
     "tinyify": "browserify -p tinyify -e index.js -r ./index.js:dgw -o dist/dark-gravity-wave.min.js",
     "build": "npm run browserify && npm run tinyify"
@@ -27,7 +27,6 @@
     "url": "https://github.com/dashevo/dark-gravity-wave-js/issues"
   },
   "devDependencies": {
-    "benchmark": "^2.1.4",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "eslint": "^5.11.1",
