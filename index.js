@@ -13,7 +13,7 @@ function getDarkTarget(blocks) {
 }
 
 /**
-* @param {Array} blocks - An array of blocks having height, target, timestamp property
+* @param {Array} blocks - An array of blocks having target and timestamp property
 * @params {Int} [blockTime=150] - A block time value
 * @return {Int} compact - The difficulty value
 * current difficulty formula, dash - based on DarkGravity v3
