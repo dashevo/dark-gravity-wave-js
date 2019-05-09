@@ -107,19 +107,19 @@ describe('dark gravity wave', () => {
   describe('difficulty calculation', () => {
     it('should be valid for low enough target', () => {
       const highTargetBits = 0x1b0777d4;
-      const result = dgw.isValidTarget(highTargetBits, blocks);
+      const result = dgw.isValidTarget(highTargetBits, blocks, 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should be invalid for too high target', () => {
       const highTargetBits = 0x208fffff;
-      const result = dgw.isValidTarget(highTargetBits, blocks);
+      const result = dgw.isValidTarget(highTargetBits, blocks, 'devnet');
       expect(result).to.equal(false);
     });
 
     it('should be valid for the max regtest target if less than 25 blocks has been mined', () => {
       const highTargetBits = 0x207fffff;
-      const result = dgw.isValidTarget(highTargetBits, blocks.slice(0, 10));
+      const result = dgw.isValidTarget(highTargetBits, blocks.slice(0, 10), 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -137,63 +137,63 @@ describe('dark gravity wave', () => {
 
     it('should be valid when num blocks < maxBlocks and maxTarget = 0x207fffff', () => {
       const highTargetInt = 0x207fffff;
-      const result = dgw.isValidTarget(highTargetInt, blocks.slice(0, 10));
+      const result = dgw.isValidTarget(highTargetInt, blocks.slice(0, 10), 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should be invalid maxTarget = 0x207fffff as int', () => {
       const highTargetInt = 545259519;
-      const result = dgw.isValidTarget(highTargetInt, blocks);
+      const result = dgw.isValidTarget(highTargetInt, blocks, 'devnet');
       expect(result).to.equal(false);
     });
 
     it('should be valid for maxTarget > 0x207fffff', () => {
       const highTargetInt = 0x20800000;
-      const result = dgw.isValidTarget(highTargetInt, blocks);
+      const result = dgw.isValidTarget(highTargetInt, blocks, 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should be valid for maxTarget > 0x207fffff as int', () => {
       const highTargetInt = 0x20800000;
-      const result = dgw.isValidTarget(highTargetInt, blocks);
+      const result = dgw.isValidTarget(highTargetInt, blocks, 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should be valid when allHeaders is empty array', () => {
       const highTargetInt = 0x20800000;
-      const result = dgw.isValidTarget(highTargetInt, [{}]);
+      const result = dgw.isValidTarget(highTargetInt, [{}], 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should throw error for allHeaders is {}', () => {
       const highTargetBits = 0x208fffff;
       expect(() => {
-        dgw.isValidTarget(highTargetBits, {});
+        dgw.isValidTarget(highTargetBits, {}, 'devnet');
       }).to.throw('allHeaders.slice is not a function');
     });
 
     it('should throw error for allHeaders is string > 25 chars', () => {
       const highTargetBits = 0x1b0777d4;
       expect(() => {
-        dgw.isValidTarget(highTargetBits, 's'.repeat(26));
+        dgw.isValidTarget(highTargetBits, 's'.repeat(26), 'devnet');
       }).to.throw('allHeaders.slice(...).reverse is not a function');
     });
 
     it('should throw error for signed int', () => {
       expect(() => {
-        dgw.isValidTarget(-1, blocks);
+        dgw.isValidTarget(-1, blocks, 'devnet');
       }).to.throw('byte array longer than desired length');
     });
 
     it('should throw error when compact is undefined', () => {
       expect(() => {
-        dgw.isValidTarget(undefined, blocks);
+        dgw.isValidTarget(undefined, blocks, 'devnet');
       }).to.throw('Compact of type undefined not supported');
     });
 
     it('should throw error when compact is boolean', () => {
       expect(() => {
-        dgw.isValidTarget(true, blocks);
+        dgw.isValidTarget(true, blocks, 'devnet');
       }).to.throw('Compact of type boolean not supported');
     });
 
@@ -204,19 +204,19 @@ describe('dark gravity wave', () => {
         const v = value;
         delete v.height;
       });
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
     it('height values ignored in calculation in getTarget function: the same values', () => {
       const highTargetBits = 0x1b0777d4;
-      const blocks2 = JSON.parse(JSON.stringify(blocks));
+      const blocks2 = JSON.parse(JSON.stringify(blocks, 'devnet'));
       const temp = blocks2[0].height;
       blocks2.forEach((value) => {
         const v = value;
         v.height = temp;
       });
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -229,7 +229,7 @@ describe('dark gravity wave', () => {
         delete v.target;
       });
       expect(() => {
-        dgw.isValidTarget(highTargetBits, blocks2);
+        dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       }).to.throw('Compact of type undefined not supported');
     });
 
@@ -240,14 +240,14 @@ describe('dark gravity wave', () => {
         const v = value;
         delete v.timestamp;
       });
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(false);
     });
 
     it('should be invalid for blockTime=0', () => {
       const highTargetBits = 0x1b0777d4;
       const blockTime = 0;
-      const result = dgw.isValidTarget(highTargetBits, blocks, blockTime);
+      const result = dgw.isValidTarget(highTargetBits, blocks, 'devnet', blockTime);
       expect(result).to.equal(false);
     });
 
@@ -269,7 +269,7 @@ describe('dark gravity wave', () => {
           v.timestamp += 2000;
         }
       });
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -280,14 +280,14 @@ describe('dark gravity wave', () => {
         const v = value;
         v.timestamp = 0;
       });
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
     it('should be valid when reverse block array(reversed timestamp)', () => {
       const highTargetBits = 0x1b0777d4;
       const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -295,7 +295,7 @@ describe('dark gravity wave', () => {
       const highTargetBits = 0x1b0777d4;
       const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
       blocks2[blocks2.length - 1].timestamp += 2000000000;
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -304,7 +304,7 @@ describe('dark gravity wave', () => {
       const blocks2 = JSON.parse(JSON.stringify(blocks)).reverse();
       // 1 seconds between blocks
       blocks2[blocks2.length - 24].timestamp = blocks2[blocks2.length - 1].timestamp - 24;
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -314,7 +314,7 @@ describe('dark gravity wave', () => {
       // eslint-disable-next-line operator-linebreak
       blocks2[blocks2.length - 24].timestamp =
           blocks2[blocks2.length - 1].timestamp - ((24 * 150) / 3.0);
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
 
@@ -324,7 +324,7 @@ describe('dark gravity wave', () => {
       // eslint-disable-next-line operator-linebreak
       blocks2[blocks2.length - 24].timestamp =
           blocks2[blocks2.length - 1].timestamp - (24 * 150 * 3.0);
-      const result = dgw.isValidTarget(highTargetBits, blocks2);
+      const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
       expect(result).to.equal(true);
     });
   });
