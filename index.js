@@ -13,11 +13,11 @@ function getDarkTarget(blocks) {
 }
 
 /**
-* @param {Array} blocks - An array of blocks having target and timestamp property
-* @params {Int} [blockTime=150] - A block time value
-* @return {Int} compact - The difficulty value
+* @param {Array} allHeaders - An array of blocks having target and timestamp property
+* @param {int} blockTime - A block time value
+* @return {int} compact - The difficulty value
 * current difficulty formula, dash - based on DarkGravity v3
-* original work done by evan duffield, modified for javascript
+* original work done by Evan Duffield, modified for javascript
 */
 function getTarget(allHeaders, blockTime) {
   if (allHeaders.length < maxBlocks) return getDoubleFrom256(maxTarget);
