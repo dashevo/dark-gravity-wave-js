@@ -1,6 +1,134 @@
 const { expect } = require('chai');
 const dgw = require('../');
 
+const mainnetBlocks = [
+  {
+    height: 999900,
+    timestamp: 1546794811,
+    target: 0x1937efd3,
+  },
+  {
+    height: 999901,
+    timestamp: 1546794872,
+    target: 0x193bdb17,
+  },
+  {
+    height: 999902,
+    timestamp: 1546795363,
+    target: 0x193c2e06,
+  },
+  {
+    height: 999903,
+    timestamp: 1546795705,
+    target: 0x19436374,
+  },
+  {
+    height: 999904,
+    timestamp: 1546795801,
+    target: 0x1942c8da,
+  },
+  {
+    height: 999905,
+    timestamp: 1546796153,
+    target: 0x1942a824,
+  },
+  {
+    height: 999906,
+    timestamp: 1546796323,
+    target: 0x19466999,
+  },
+  {
+    height: 999907,
+    timestamp: 1546796325,
+    target: 0x194815a5,
+  },
+  {
+    height: 999908,
+    timestamp: 1546796396,
+    target: 0x19481272,
+  },
+  {
+    height: 999909,
+    timestamp: 1546796425,
+    target: 0x1948b446,
+  },
+  {
+    height: 999910,
+    timestamp: 1546796594,
+    target: 0x194767ac,
+  },
+  {
+    height: 999911,
+    timestamp: 1546797416,
+    target: 0x194798d6,
+  },
+  {
+    height: 999912,
+    timestamp: 1546797529,
+    target: 0x19560a56,
+  },
+  {
+    height: 999913,
+    timestamp: 1546797597,
+    target: 0x19592a34,
+  },
+  {
+    height: 999914,
+    timestamp: 1546797677,
+    target: 0x195bb28f,
+  },
+  {
+    height: 999915,
+    timestamp: 1546797788,
+    target: 0x195c638e,
+  },
+  {
+    height: 999916,
+    timestamp: 1546798067,
+    target: 0x195a9134,
+  },
+  {
+    height: 999917,
+    timestamp: 1546798096,
+    target: 0x195a40bd,
+  },
+  {
+    height: 999918,
+    timestamp: 1546798145,
+    target: 0x19532245,
+  },
+  {
+    height: 999919,
+    timestamp: 1546798220,
+    target: 0x194eadda,
+  },
+  {
+    height: 999920,
+    timestamp: 1546798311,
+    target: 0x1950aaf2,
+  },
+  {
+    height: 999921,
+    timestamp: 1546798458,
+    target: 0x195298e1,
+  },
+  {
+    height: 999922,
+    timestamp: 1546798565,
+    target: 0x1955383b,
+  },
+  {
+    height: 999923,
+    timestamp: 1546798603,
+    target: 0x195587da,
+  },
+  {
+    height: 999924,
+    timestamp: 1546798801,
+    target: 0x19514193,
+  },
+];
+
 const blocks = [{
   height: 312667,
   target: 0x1b193a68,
@@ -325,6 +453,12 @@ describe('dark gravity wave', () => {
       blocks2[blocks2.length - 24].timestamp =
           blocks2[blocks2.length - 1].timestamp - (24 * 150 * 3.0);
       const result = dgw.isValidTarget(highTargetBits, blocks2, 'devnet');
+      expect(result).to.equal(true);
+    });
+
+    it('should work with mainnet headers', () => {
+      const highTargetBits = 0x1b0777d4;
+      const result = dgw.isValidTarget(highTargetBits, mainnetBlocks);
       expect(result).to.equal(true);
     });
   });
