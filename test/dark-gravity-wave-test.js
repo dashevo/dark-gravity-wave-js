@@ -457,7 +457,7 @@ describe('dark gravity wave', () => {
     });
 
     it('should work with mainnet headers', () => {
-      const highTargetBits = 0x1b0777d4;
+      const highTargetBits = 0x19514193;
       const result = dgw.isValidTarget(highTargetBits, mainnetBlocks);
       expect(result).to.equal(true);
     });
