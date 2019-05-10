@@ -17,17 +17,17 @@ function getDarkTarget(blocks) {
 const getNetworkParams = (network) => {
   switch (network) {
     case 'mainnet':
-      return { maxTargetMainnet, allowMinDifficultyBlocks: false };
+      return { maxTarget: maxTargetMainnet, allowMinDifficultyBlocks: false };
     case 'livenet':
-      return { maxTargetMainnet, allowMinDifficultyBlocks: false };
+      return { maxTarget: maxTargetMainnet, allowMinDifficultyBlocks: false };
     case 'testnet':
-      return { maxTargetMainnet, allowMinDifficultyBlocks: true };
+      return { maxTarget: maxTargetMainnet, allowMinDifficultyBlocks: true };
     case 'devnet':
-      return { maxTargetRegtest, allowMinDifficultyBlocks: true };
+      return { maxTarget: maxTargetRegtest, allowMinDifficultyBlocks: true };
     case 'regtest':
-      return { maxTargetRegtest, allowMinDifficultyBlocks: true };
+      return { maxTarget: maxTargetRegtest, allowMinDifficultyBlocks: true };
     default:
-      return { maxTargetMainnet, allowMinDifficultyBlocks: false };
+      return { maxTarget: maxTargetMainnet, allowMinDifficultyBlocks: false };
   }
 };
 
