@@ -7,7 +7,7 @@ const maxBlocks = 24;
 const maxTargetMainnet = 0x1e0ffff0;
 const maxTargetRegtest = 0x207fffff;
 
-// Dash: 2.5 minutes
+// Dash blocktime: 2.5 minutes
 const powTargetSpacing = 2.5 * 60;
 
 function getDarkTarget(blocks) {
@@ -64,7 +64,7 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
     }
   }
 
-  const timeSpanTarget = (blocks.length) * 150;
+  const timeSpanTarget = (blocks.length) * powTargetSpacing;
   const nActualTimespan = Math.min(
     Math.max(blocks[0].timestamp - blocks[blocks.length - 1].timestamp, timeSpanTarget / 3.0),
     timeSpanTarget * 3.0,
