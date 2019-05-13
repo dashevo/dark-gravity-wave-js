@@ -78,9 +78,6 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
 }
 
 function hasValidTarget(newHeader, previousHeaders, network = 'mainnet') {
-  if (previousHeaders.length < maxBlocks) {
-    throw new Error('previousHeaders.length needs to be at least 24');
-  }
   return getDoubleFrom256(newHeader.target) <= getTarget(previousHeaders, newHeader, network);
 }
 
