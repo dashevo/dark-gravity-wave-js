@@ -1,6 +1,5 @@
 /* eslint new-cap: 0 */
 const u256 = require('./lib/u256');
-const getDoubleFrom256 = require('./lib/utils/getDoubleFrom256');
 
 const maxBlocks = 24;
 const maxTargetMainnet = 0x1e0ffff0;
@@ -52,7 +51,7 @@ const getNetworkParams = (network) => {
 function getTarget(allHeaders, newHeader, network = 'mainnet') {
   const { maxTarget, allowMinDifficultyBlocks } = getNetworkParams(network);
 
-  if (allHeaders.length < maxBlocks) return getDoubleFrom256(maxTarget);
+  if (allHeaders.length < maxBlocks) return maxTarget;
 
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
@@ -60,15 +59,15 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
   if (allowMinDifficultyBlocks) {
     // recent block is more than 2 hours old
     if (newHeader.timestamp > blocks[0].timestamp + (2 * 60 * 60)) {
-      return getDoubleFrom256(maxTarget);
+      return maxTarget;
     }
     // recent block is more than 10 minutes old
     if (newHeader.timestamp > blocks[0].timestamp + (powTargetSpacing * 4)) {
-      let bnNew = getDoubleFrom256(blocks[0].target) * 10;
+      let bnNew = blocks[0].target * 10;
       if (bnNew > maxTarget) {
         bnNew = maxTarget;
       }
-      return getDoubleFrom256(bnNew);
+      return bnNew;
     }
   }
   // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
@@ -82,11 +81,11 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
   // Calculate the new difficulty based on actual and target timespan.
   const darkTarget = getDarkTarget(blocks)
     .multiplyWithInteger(nActualTimespan).divide(nTargetTimespan);
-  return getDoubleFrom256(Math.min(darkTarget.getCompact(), maxTarget));
+  return Math.min(darkTarget.getCompact(), maxTarget);
 }
 
 function hasValidTarget(newHeader, previousHeaders, network = 'mainnet') {
-  return getDoubleFrom256(newHeader.target) === getTarget(previousHeaders, newHeader, network);
+  return newHeader.target === getTarget(previousHeaders, newHeader, network);
 }
 
 module.exports = {
