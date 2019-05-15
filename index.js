@@ -1,9 +1,8 @@
 /* eslint new-cap: 0 */
-// const u256 = require('./lib/u256');
+const u256 = require('./lib/u256');
 const getDoubleFrom256 = require('./lib/utils/getDoubleFrom256');
 
 const maxBlocks = 24;
-
 const maxTargetMainnet = 0x1e0ffff0;
 const maxTargetRegtest = 0x207fffff;
 
@@ -11,7 +10,16 @@ const maxTargetRegtest = 0x207fffff;
 const powTargetSpacing = 2.5 * 60;
 
 function getDarkTarget(blocks) {
-  return blocks.reduce((sum, b) => sum + getDoubleFrom256(b.target), 0.0) / (blocks.length + 1);
+  const blocksU256 = blocks.map((b) => {
+    const target = new u256();
+    target.setCompact(b.target);
+    return target;
+  });
+  const averageTarget = blocksU256.reduce((sum, b) => {
+    sum.add(b);
+    return sum;
+  }, blocksU256[0]);
+  return averageTarget.divide(blocks.length + 1);
 }
 
 const getNetworkParams = (network) => {
@@ -63,22 +71,22 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
       return getDoubleFrom256(bnNew);
     }
   }
+  // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
+  const nTargetTimespan = (blocks.length) * powTargetSpacing;
 
-  const timeSpanTarget = (blocks.length) * powTargetSpacing;
   const nActualTimespan = Math.min(
-    Math.max(blocks[0].timestamp - blocks[blocks.length - 1].timestamp, timeSpanTarget / 3.0),
-    timeSpanTarget * 3.0,
+    Math.max(blocks[0].timestamp - blocks[blocks.length - 1].timestamp, nTargetTimespan / 3.0),
+    nTargetTimespan * 3.0,
   );
 
-  const darkTarget = ((getDarkTarget(blocks) * nActualTimespan) / timeSpanTarget);
-
-  // Prevent too high target (ie too low difficulty)
-  const maxTargetAsDouble = getDoubleFrom256(maxTarget);
-  return Math.min(darkTarget, maxTargetAsDouble);
+  // Calculate the new difficulty based on actual and target timespan.
+  const darkTarget = getDarkTarget(blocks)
+    .multiplyWithInteger(nActualTimespan).divide(nTargetTimespan);
+  return getDoubleFrom256(Math.min(darkTarget.getCompact(), maxTarget));
 }
 
 function hasValidTarget(newHeader, previousHeaders, network = 'mainnet') {
-  return getDoubleFrom256(newHeader.target) <= getTarget(previousHeaders, newHeader, network);
+  return getDoubleFrom256(newHeader.target) === getTarget(previousHeaders, newHeader, network);
 }
 
 module.exports = {
