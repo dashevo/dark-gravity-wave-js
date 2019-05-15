@@ -71,7 +71,7 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
     }
   }
   // nTargetTimespan is the time that the CountBlocks should have taken to be generated.
-  const nTargetTimespan = (blocks.length) * powTargetSpacing;
+  const nTargetTimespan = blocks.length * powTargetSpacing;
 
   const nActualTimespan = Math.min(
     Math.max(blocks[0].timestamp - blocks[blocks.length - 1].timestamp, nTargetTimespan / 3.0),
