@@ -14,10 +14,7 @@ function getDarkTarget(blocks) {
     target.setCompact(b.target);
     return target;
   });
-  const averageTarget = blocksU256.reduce((sum, b) => {
-    sum.add(b);
-    return sum;
-  }, blocksU256[0]);
+  const averageTarget = blocksU256.reduce((sum, b) => sum.add(b), blocksU256[0]);
   return averageTarget.divide(blocks.length + 1);
 }
 
