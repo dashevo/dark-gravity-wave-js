@@ -88,5 +88,4 @@ function hasValidTarget(newHeader, previousHeaders, network = 'mainnet') {
 
 module.exports = {
   hasValidTarget,
-  getTarget,
 };
