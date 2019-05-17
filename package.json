@@ -34,8 +34,5 @@
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "tinyify": "^2.5.0"
-  },
-  "dependencies": {
-    "bn.js": "^4.11.8"
   }
 }
