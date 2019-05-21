@@ -52,7 +52,6 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
 
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
-  // TODO: write tests
   if (allowMinDifficultyBlocks) {
     // recent block is more than 2 hours old
     if (newHeader.timestamp > blocks[0].timestamp + (2 * 60 * 60)) {
