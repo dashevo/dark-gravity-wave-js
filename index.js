@@ -53,17 +53,21 @@ function getTarget(allHeaders, newHeader, network = 'mainnet') {
   const blocks = allHeaders.slice(Math.max(allHeaders.length - maxBlocks, 0)).reverse();
 
   if (allowMinDifficultyBlocks) {
-    // recent block is more than 2 hours old
+    // most recent block is more than 2 hours old
     if (newHeader.timestamp > blocks[0].timestamp + (2 * 60 * 60)) {
       return maxTarget;
     }
-    // recent block is more than 10 minutes old
+    // most recent block is more than 10 minutes old
     if (newHeader.timestamp > blocks[0].timestamp + (powTargetSpacing * 4)) {
-      let bnNew = blocks[0].target * 10;
-      if (bnNew > maxTarget) {
-        bnNew = maxTarget;
+      let bnNew = new u256();
+      bnNew.setCompact(blocks[0].target);
+      bnNew = bnNew.multiplyWithInteger(10);
+      const uMaxTarget = new u256();
+      uMaxTarget.setCompact(maxTarget);
+      if (bnNew.getCompact() > uMaxTarget.getCompact()) {
+        bnNew = uMaxTarget;
       }
-      return bnNew;
+      return bnNew.getCompact();
     }
   }
   // nTargetTimespan is the time that the blocks should have taken to be generated.
