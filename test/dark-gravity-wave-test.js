@@ -466,7 +466,7 @@ describe('dark gravity wave', () => {
       expect(result).to.equal(false);
     });
 
-    it('should have target below lowest target with timestamp (10m+1sec)', () => {
+    it('should have target below max target with timestamp (10m+1sec)', () => {
       timestamp = 1438531999 + 601;
       const highTargetBits = 0x207fffff;
       const header = { target: highTargetBits, timestamp };
@@ -474,7 +474,7 @@ describe('dark gravity wave', () => {
       expect(result).to.equal(false);
     });
 
-    it('should have target below lowest target with timestamp (20m)', () => {
+    it('should have target below max target with timestamp (20m)', () => {
       timestamp = 1438531999 + 1200;
       const highTargetBits = 0x207fffff;
       const header = { target: highTargetBits, timestamp };
