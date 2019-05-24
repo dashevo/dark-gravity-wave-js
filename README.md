@@ -14,7 +14,7 @@ npm install @dashevo/dark-gravity-wave
 ## Usage
 
 ```js
-var dgw = require('@dashevo/dark-gravity-wave');
+const dgw = require('@dashevo/dark-gravity-wave');
 
 dgw.hasValidTarget(header, previousHeaders, 'testnet');
 // -> true or false
@@ -22,11 +22,19 @@ dgw.hasValidTarget(header, previousHeaders, 'testnet');
 
 ## API
 
-### hasValidTarget(header, previousHeaders, [network = 'mainnet])
+### hasValidTarget(header, previousHeaders, [network = 'mainnet'])
 
-#### array
+#### header
+
+Type: `object`
+
+#### previousHeaders
 
 Type: `array`
+
+#### network
+
+Type: `string` (optional, default = 'mainnet')
 
 Validates the target (bits) property of a block header. The 2nd argument, the array of most recent previous headers, must contain the last 24 blocks. Arrays with length > 24 are allowed however only latest 24 will be considered.
 The block header objects must contain *timestamp* and *target* properties (nBits field in the block header)
