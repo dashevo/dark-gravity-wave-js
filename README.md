@@ -36,7 +36,7 @@ Type: `array`
 
 Type: `string` (optional, default = 'mainnet')
 
-Validates the target (bits) property of a block header. The 2nd argument, the array of most recent previous headers, must contain the last 24 blocks. Arrays with length > 24 are allowed however only latest 24 will be considered.
+Validates the target (bits) property of a block header. The 2nd argument, the array of most recent previous headers, must contain the last 24 blocks. Arrays with length > 24 are allowed however only the latest 24 will be considered.
 The block header objects must contain *timestamp* and *target* properties (nBits field in the block header)
 
 
