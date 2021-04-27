@@ -1,9 +1,9 @@
 # dark-gravity-wave-js
 
-[![Build Status](https://travis-ci.com/dashevo/dark-gravity-wave-js.svg?branch=master)](https://travis-ci.com/dashevo/dark-gravity-wave-js)
+[![Build Status](https://github.com/dashevo/dark-gravity-wave-js/actions/workflows/test_and_release.yml/badge.svg)](https://github.com/dashevo/dark-gravity-wave-js/actions/workflows/test_and_release.yml)
 [![NPM version](https://img.shields.io/npm/v/@dashevo/dark-gravity-wave.svg)](https://npmjs.org/package/@dashevo/dark-gravity-wave)
 
-> Dark Gravity Wave difficulty retargeting algorithm in JavaScript
+Dark Gravity Wave difficulty retargeting algorithm in JavaScript
 
 ## Install
 
